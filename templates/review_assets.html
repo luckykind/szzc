@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card shadow">
+    <div class="card-header bg-warning text-dark">
+        <h4 class="mb-0">待审核资产</h4>
+    </div>
+    <div class="card-body">
+        {% if pending_assets %}
+        <div class="row g-4">
+            {% for asset in pending_assets %}
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ asset.asset_name }}</h5>
+                        <div class="mb-3">
+                            <small class="text-muted">上传者:</small>
+                            <p class="mb-0">{{ asset.uploader.username }}</p>
+                        </div>
+                        <form method="POST" action="{{ url_for('review_asset', asset_id=asset.id) }}">
+                            <div class="form-group mb-3">
+                                <label class="form-label">审核意见</label>
+                                <textarea name="review_notes" class="form-control" rows="3"></textarea>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label class="form-label">审核状态</label>
+                                <select name="status" class="form-select">
+                                    <option value="approved">通过</option>
+                                    <option value="rejected">驳回</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">提交审核</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            当前没有待审核的资产
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

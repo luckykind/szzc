@@ -1,29 +1,89 @@
 {% extends "base.html" %}
-{% block title %}Assets{% endblock %}
+
 {% block content %}
-    <h1>数字资产</h1>
-    <a href="{{ url_for('asset_create') }}" class="btn btn-success">Create New Asset</a>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Tags</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for asset in assets %}
-                <tr>
-                    <td><a href="{{ url_for('asset_detail', asset_id=asset.id) }}">{{ asset.name }}</a></td>
-                    <td>{{ asset.type }}</td>
-                    <td>{{ asset.tags }}</td>
-                    <td>
-                        <a href="{{ url_for('asset_edit', asset_id=asset.id) }}" class="btn btn-sm btn-primary">Edit</a>
-                        <a href="{{ url_for('asset_delete', asset_id=asset.id) }}" class="btn btn-sm btn-danger">Delete</a>
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="card shadow">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">{{ title }}</h4>
+        <div class="btn-group">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                <i class="bi bi-filter me-1"></i>筛选
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="?status=all">全部状态</a></li>
+                <li><a class="dropdown-item" href="?status=pending">待审核</a></li>
+                <li><a class="dropdown-item" href="?status=approved">已通过</a></li>
+                <li><a class="dropdown-item" href="?status=archived">已归档</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>资产名称</th>
+                        <th>分类</th>
+                        <th>状态</th>
+                        <th>上传时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for asset in assets %}
+                    <tr>
+                        <td>{{ asset.asset_name }}</td>
+                        <td>{{ asset.category }}</td>
+                        <td>
+                            <span class="badge bg-{{
+                                'warning' if asset.status == 'pending'
+                                else 'success' if asset.status == 'approved'
+                                else 'secondary'
+                            }}">
+                                {{ asset.status|capitalize }}
+                            </span>
+                        </td>
+                        <td>{{ asset.upload_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>
+                            <a href="{{ url_for('asset_detail', asset_id=asset.id) }}"
+                               class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i> 查看
+                            </a>
+                            {% if current_user.is_authenticated and current_user.is_admin %}
+                            <a href="{{ url_for('edit_asset', asset_id=asset.id) }}"
+                               class="btn btn-sm btn-outline-success">
+                                <i class="bi bi-pencil"></i> 编辑
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 分页 -->
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if pagination.has_prev %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ pagination.prev_num }}">上一页</a>
+                </li>
+                {% endif %}
+
+                {% for page in pagination.iter_pages() %}
+                <li class="page-item {% if page == pagination.page %}active{% endif %}">
+                    <a class="page-link" href="?page={{ page }}">{{ page }}</a>
+                </li>
+                {% endfor %}
+
+                {% if pagination.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ pagination.next_num }}">下一页</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</div>
 {% endblock %}

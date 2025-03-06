@@ -10,6 +10,37 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired
 
+
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms.validators import DataRequired, EqualTo, Length
+
+class LoginForm(FlaskForm):
+    username = StringField('用户名', validators=[
+        DataRequired(message='请输入用户名'),
+        Length(max=50)
+    ])
+    password = PasswordField('密码', validators=[
+        DataRequired(message='请输入密码'),
+        Length(min=6, max=128)
+    ])
+    remember = BooleanField('保持登录')
+    submit = SubmitField('登录')
+
+class RegistrationForm(FlaskForm):
+    username = StringField('用户名', validators=[
+        DataRequired(message='请输入用户名'),
+        Length(max=50)
+    ])
+    password = PasswordField('密码', validators=[
+        DataRequired(message='请输入密码'),
+        Length(min=6, max=128)
+    ])
+    confirm_password = PasswordField('确认密码', validators=[
+        DataRequired(message='请确认密码'),
+        EqualTo('password', message='两次密码不一致')
+    ])
+    submit = SubmitField('注册')
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card shadow">
+    <div class="card-header bg-info text-white">
+        <h4 class="mb-0">搜索结果：{{ request.args.get('q') }}</h4>
+    </div>
+    <div class="card-body">
+        {% if results %}
+        <div class="list-group">
+            {% for asset in results %}
+            <a href="{{ url_for('asset_detail', asset_id=asset.id) }}" 
+               class="list-group-item list-group-item-action">
+               {{ asset.asset_name }} - {{ asset.category }}
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-muted">未找到匹配的资产</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
