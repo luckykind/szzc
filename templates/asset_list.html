@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Assets{% endblock %}
+{% block content %}
+    <h1>数字资产</h1>
+    <a href="{{ url_for('asset_create') }}" class="btn btn-success">Create New Asset</a>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Tags</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for asset in assets %}
+                <tr>
+                    <td><a href="{{ url_for('asset_detail', asset_id=asset.id) }}">{{ asset.name }}</a></td>
+                    <td>{{ asset.type }}</td>
+                    <td>{{ asset.tags }}</td>
+                    <td>
+                        <a href="{{ url_for('asset_edit', asset_id=asset.id) }}" class="btn btn-sm btn-primary">Edit</a>
+                        <a href="{{ url_for('asset_delete', asset_id=asset.id) }}" class="btn btn-sm btn-danger">Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
